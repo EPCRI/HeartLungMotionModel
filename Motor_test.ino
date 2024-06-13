@@ -31,18 +31,11 @@ void setup() {
     // if using enable/disable on ENABLE pin (active LOW) instead of SLEEP uncomment next line
     // stepper.setEnableActiveState(LOW);
     stepper.enable();
-    
-    // set current level (for DRV8880 only). 
-    // Valid percent values are 25, 50, 75 or 100.
-    // stepper.setCurrent(100);
 }
 
 void loop() {
     delay(1000);
-
-    /*
-     * Moving motor in full step mode is simple:
-     */
+    
     stepper.setMicrostep(1);  // Set microstep mode to 1:1
 
     // Calculate steps for 1 second at 250 RPM
