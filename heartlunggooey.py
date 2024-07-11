@@ -37,10 +37,10 @@ class Gooey(QMainWindow, Ui_MainWindow):
     def Connect(self):
         # comment
         portname = self.COM_Port_comboBox.currentText()
-        ser = serial.Serial(portname, baudrate=9600, timeout=1, write_timeout=1)
+        self.ser = serial.Serial(portname, baudrate=9600, timeout=1, write_timeout=1)
         time.sleep(2)
-        ser.write('T'.encode())
-        Itemscheck = ser.read()
+        self.ser.write('T'.encode())
+        Itemscheck = self.ser.read()
         print(portname)
         print(Itemscheck)
         if Itemscheck == (b'C'):
