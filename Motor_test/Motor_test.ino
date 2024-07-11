@@ -9,17 +9,17 @@
 #define M1 11
 #define RPM 200
 
-// Initialization
 DRV8834 stepper(MOTOR_STEPS, DIR, STEP, SLEEP, M0, M1);
 
 // Variables
 String motorData = "";            // String to store received motor instruction data
 bool program = false;             // boolean for managing if the motor instructions should be programmed to memory
-int instructionIndex = 0;
-unsigned long interval;
-
+bool motorMove = false;           // boolean to manage if motor should start moving (after instructions are sent)
 int motorSteps[256];              // Memory array to store motor instructions
 int motorStepCount = 0;
+int motorIndex = 0;
+unsigned long interval;
+unsigned long previousTime = 0;
 
 void setup() {
     Serial.begin(9600);
@@ -40,10 +40,20 @@ void loop() {
                 program = false;
                 parseData(motorData);                       // parse received data
                 // printMotorSteps();                       // after we're all done, print the decoded data
+                motorMove = true;                           // motor ready to move
+                Serial.println("Y");                        // Confirmation back to UI that the motor would start moving    
             } else {
                 motorData += character;                     // else, we're still receiving - append to motorData
             }
         }
+    }
+
+    if (motorMove){
+      unsigned long currentTime = millis();                 // use built-in timer for managing motor
+      if (currentTime - previousTime >= interval) {
+          previousTime = currentTime;
+          moveSteps();
+      }
     }
 }
 
@@ -61,8 +71,17 @@ void parseData(String data) {
     }
 }
 
+void moveSteps() {
+    if (motorIndex < motorStepCount) {
+        int steps = motorSteps[motorIndex++];
+        stepper.move(steps);
+        if (motorIndex >= motorStepCount) {               // reset index if reach the end of the instruction set
+            motorIndex = 0; 
+        }
+    }
+}
 
----------------------Archive functions-------------------------------
+// ---------------------Archive functions-------------------------------
 void printMotorSteps() {
     for (int i = 0; i < motorStepCount; i++) {
         Serial.print("Step ");
