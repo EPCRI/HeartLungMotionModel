@@ -49,8 +49,15 @@ class Gooey(QMainWindow, Ui_MainWindow):
             print ("COM not connected")
 
     def Calibrate(self):
-        pass
-    
+        Calibrateactivate = self.Calibrate_pushButton.currentText()
+        self.ser.write('C'.encode())
+        print(Calibrateactivate)
+        Calibrate = self.ser.read()
+        print(Calibrate)
+        if Calibrate == (b'Y'):
+            print("Calibrating")
+        else:
+            pass
     def Heart_Amp_Text(self):
         pass 
 
