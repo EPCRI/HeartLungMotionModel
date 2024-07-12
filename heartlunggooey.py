@@ -7,13 +7,14 @@ import time
 import serial
 from serial.tools import list_ports
 
-class Gooey(QMainWindow, Ui_MainWindow):
+class Gooey(QMainWindow, Ui_MainWindow): 
     def __init__(self, parent=None):
         super(Gooey, self).__init__(parent)
         self.setupUi(self)
         self.Start_pushButton.clicked.connect(self.Start)
         self.Stop_pushButton.clicked.connect(self.Stop)
         self.Calibrate_pushButton.clicked.connect(self.Calibrate)
+        self.Hard_Stop_pushButton.clicked.connect(self.Hard_Stop)
         self.Serial_Connection_pushButton.clicked.connect(self.Refresh)
         self.Connect_pushButton.clicked.connect(self.Connect)
         self.Heart_Amp_Input_lineEdit.textChanged.connect(self.Heart_Amp_Text)
@@ -21,20 +22,23 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.Lung_Amp_Input_lineEdit.textChanged.connect(self.Lung_Amp_Text)
         self.Lung_Freq_Input_lineEdit.textChanged.connect(self.Lung_Freq_Text)
         self.Phase_diff_lineEdit.textChanged.connect(self.Phase_Diff)
-    def Start(self):
-        pass 
-    
-    def Stop(self):
-        pass
 
-    def Refresh(self):
+    def Start(self): # Start button to run motors 
+        self.Start_pushButton.clicked()
+        self.ser.write('P'.encode()) 
+    
+    def Stop(self): # No stop button code on arduino 
+        self.Stop_pushButton.clicked()
+        self.ser.write(''.encode())
+
+    def Refresh(self): # Refresh button to intake new COMs 
         self.COM_Port_comboBox.clear()
         list_of_ports = serial.tools.list_ports.comports()
         print (list_of_ports)
         for port in list_of_ports:
             self.COM_Port_comboBox.addItem(port.name)
 
-    def Connect(self):
+    def Connect(self): #Connect button for connecting to COMs 
         # comment
         portname = self.COM_Port_comboBox.currentText()
         self.ser = serial.Serial(portname, baudrate=9600, timeout=1, write_timeout=1)
@@ -48,7 +52,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         else:   
             print ("COM not connected")
 
-    def Calibrate(self):
+    def Calibrate(self): #Calibrate button for restarting the motor start point 
         Calibrateactivate = self.Calibrate_pushButton.currentText()
         self.ser.write('C'.encode())
         print(Calibrateactivate)
@@ -56,22 +60,30 @@ class Gooey(QMainWindow, Ui_MainWindow):
         print(Calibrate)
         if Calibrate == (b'Y'):
             print("Calibrating")
-        else:
-            pass
+    
+    def Hard_Stop(self): #Hard stop button for if calibration goes wrong 
+        Hard_Stopactivate = self.Hard_Stop_pushButton.currentText()
+        self.ser.write('X'.encode())
+        print(Hard_Stopactivate)
+        Hard_Stop = self.ser.read()
+        print(Hard_Stop)
+        if Hard_Stop == (b'Y'):
+            print("Stop Calibrating")
+        
     def Heart_Amp_Text(self):
-        pass 
+        pass #no input for arduino
 
     def Heart_Freq_Text(self):
-        pass
+        pass #no input for arduino
 
     def Lung_Amp_Text(self):
-        pass
+        pass #no input for arduino
 
     def Lung_Freq_Text(self):
-        pass
+        pass #no input for arduino
 
     def Phase_Diff(self):
-        pass
+        pass #no input for arduino
 
 def main():
     app = QApplication(sys.argv)
