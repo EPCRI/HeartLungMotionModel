@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import pyqtgraph as pg
 
 
 class Ui_MainWindow(object):
@@ -200,13 +201,6 @@ class Ui_MainWindow(object):
         self.gridLayout_5 = QtWidgets.QGridLayout(self.layoutWidget3)
         self.gridLayout_5.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_5.setObjectName("gridLayout_5")
-        self.Start_pushButton = QtWidgets.QPushButton(self.layoutWidget3)
-        font = QtGui.QFont()
-        font.setFamily("Arial")
-        font.setPointSize(11)
-        self.Start_pushButton.setFont(font)
-        self.Start_pushButton.setObjectName("Start_pushButton")
-        self.gridLayout_5.addWidget(self.Start_pushButton, 0, 0, 1, 1)
         self.Stop_pushButton = QtWidgets.QPushButton(self.layoutWidget3)
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -214,6 +208,16 @@ class Ui_MainWindow(object):
         self.Stop_pushButton.setFont(font)
         self.Stop_pushButton.setObjectName("Stop_pushButton")
         self.gridLayout_5.addWidget(self.Stop_pushButton, 0, 1, 1, 1)
+        self.Start_pushButton = QtWidgets.QPushButton(self.layoutWidget3)
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(11)
+        self.Start_pushButton.setFont(font)
+        self.Start_pushButton.setObjectName("Start_pushButton")
+        self.gridLayout_5.addWidget(self.Start_pushButton, 0, 0, 1, 1)
+        self.Wave_Form_Test_pushButton = QtWidgets.QPushButton(self.layoutWidget3)
+        self.Wave_Form_Test_pushButton.setObjectName("Wave_Form_Test_pushButton")
+        self.gridLayout_5.addWidget(self.Wave_Form_Test_pushButton, 0, 2, 1, 1)
         self.layoutWidget4 = QtWidgets.QWidget(self.groupBox_2)
         self.layoutWidget4.setGeometry(QtCore.QRect(50, 100, 601, 27))
         self.layoutWidget4.setObjectName("layoutWidget4")
@@ -263,10 +267,13 @@ class Ui_MainWindow(object):
         font.setPointSize(11)
         self.groupBox_3.setFont(font)
         self.groupBox_3.setObjectName("groupBox_3")
-        self.Wave_widget = QtWidgets.QWidget(self.groupBox_3)
+        self.Wave_widget = pg.PlotWidget(self.groupBox_3)
+        styles = {"color": "black", "font-size": "15px"}
+        self.Wave_widget.setLabel("left", "Amp HZ", **styles)
+        self.Wave_widget.setLabel("bottom", "Fre HZ", **styles)
+        self.Wave_widget.setTitle("Combined Heart Lung Motion", color="k", size="12pt")
+        self.Wave_widget.setBackground("w")
         self.Wave_widget.setGeometry(QtCore.QRect(0, 20, 731, 161))
-        self.Wave_widget.setStyleSheet("background-color: rgb(46, 46, 46);")
-        self.Wave_widget.setObjectName("Wave_widget")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 869, 21))
@@ -298,8 +305,9 @@ class Ui_MainWindow(object):
         self.label_6.setText(_translate("MainWindow", "Freq"))
         self.label_8.setText(_translate("MainWindow", "Lung Motion"))
         self.label_4.setText(_translate("MainWindow", "Amp"))
-        self.Start_pushButton.setText(_translate("MainWindow", "Start"))
         self.Stop_pushButton.setText(_translate("MainWindow", "Stop"))
+        self.Start_pushButton.setText(_translate("MainWindow", "Start"))
+        self.Wave_Form_Test_pushButton.setText(_translate("MainWindow", "Wave Form Test"))
         self.label_9.setText(_translate("MainWindow", "Phase diff (deg)"))
         self.label_10.setText(_translate("MainWindow", "Max Amplitude: x cm"))
         self.groupBox_3.setTitle(_translate("MainWindow", "Waveform"))

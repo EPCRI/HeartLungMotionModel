@@ -1,11 +1,17 @@
 
 from maincontrol import Ui_MainWindow
-from PyQt5.QtWidgets import QApplication, QMainWindow, QButtonGroup, QComboBox
+from PyQt5.QtWidgets import QApplication, QMainWindow, QButtonGroup, QComboBox, QLineEdit, QLabel, QDialog
 from PyQt5.QtGui import QIcon
+from PyQt5 import QtCore
 import sys
 import time
 import serial
 from serial.tools import list_ports
+import numpy as np
+import pyqtgraph as pg
+from random import randint
+# import matplotlib.pyplot as plt
+
 
 class Gooey(QMainWindow, Ui_MainWindow): 
     def __init__(self, parent=None):
@@ -17,19 +23,17 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.Hard_Stop_pushButton.clicked.connect(self.Hard_Stop)
         self.Serial_Connection_pushButton.clicked.connect(self.Refresh)
         self.Connect_pushButton.clicked.connect(self.Connect)
-        self.Heart_Amp_Input_lineEdit.textChanged.connect(self.Heart_Amp_Text)
-        self.Heart_Freq_Input_lineEdit.textChanged.connect(self.Heart_Freq_Text)
-        self.Lung_Amp_Input_lineEdit.textChanged.connect(self.Lung_Amp_Text)
-        self.Lung_Freq_Input_lineEdit.textChanged.connect(self.Lung_Freq_Text)
-        self.Phase_diff_lineEdit.textChanged.connect(self.Phase_Diff)
+        self.Wave_Form_Test_pushButton.clicked.connect(self.Wave)
 
     def Start(self): # Start button to run motors 
-        self.Start_pushButton.clicked()
         self.ser.write('P'.encode()) 
+        Start = self.ser.read()
+        print(Start)
     
     def Stop(self): # No stop button code on arduino 
-        self.Stop_pushButton.clicked()
         self.ser.write(''.encode())
+        Stop = self.ser.read()
+        print(Stop)
 
     def Refresh(self): # Refresh button to intake new COMs 
         self.COM_Port_comboBox.clear()
@@ -39,7 +43,6 @@ class Gooey(QMainWindow, Ui_MainWindow):
             self.COM_Port_comboBox.addItem(port.name)
 
     def Connect(self): #Connect button for connecting to COMs 
-        # comment
         portname = self.COM_Port_comboBox.currentText()
         self.ser = serial.Serial(portname, baudrate=9600, timeout=1, write_timeout=1)
         time.sleep(2)
@@ -53,38 +56,43 @@ class Gooey(QMainWindow, Ui_MainWindow):
             print ("COM not connected")
 
     def Calibrate(self): #Calibrate button for restarting the motor start point 
-        Calibrateactivate = self.Calibrate_pushButton.currentText()
         self.ser.write('C'.encode())
-        print(Calibrateactivate)
         Calibrate = self.ser.read()
         print(Calibrate)
         if Calibrate == (b'Y'):
             print("Calibrating")
     
     def Hard_Stop(self): #Hard stop button for if calibration goes wrong 
-        Hard_Stopactivate = self.Hard_Stop_pushButton.currentText()
         self.ser.write('X'.encode())
-        print(Hard_Stopactivate)
         Hard_Stop = self.ser.read()
         print(Hard_Stop)
         if Hard_Stop == (b'Y'):
             print("Stop Calibrating")
         
-    def Heart_Amp_Text(self):
-        pass #no input for arduino
 
-    def Heart_Freq_Text(self):
-        pass #no input for arduino
-
-    def Lung_Amp_Text(self):
-        pass #no input for arduino
-
-    def Lung_Freq_Text(self):
-        pass #no input for arduino
-
-    def Phase_Diff(self):
-        pass #no input for arduino
-
+    def Wave(self):
+        self.heart_amplitude = float(self.Heart_Amp_Input_lineEdit.text())
+        print ("heart amp reading", self.heart_amplitude)
+        self.heart_frequency = float(self.Heart_Freq_Input_lineEdit.text())
+        self.lung_amplitude = float(self.Lung_Amp_Input_lineEdit.text())
+        self.lung_frequency = float(self.Lung_Freq_Input_lineEdit.text())
+        self.Phase_Diff = float(self.Phase_diff_lineEdit.text())
+        dt = 0.05
+        wave_period = 1 / self.lung_frequency
+        print("Period: ", wave_period)
+        t = np.arange(0, wave_period, dt)
+        heart_motion = self.heart_amplitude * np.sin(2 * np.pi * self.heart_frequency * t) # (self.Phase_Diff/360 * 2 * np.pi)
+        lung_motion = self.lung_amplitude * np.sin(2 * np.pi * self.lung_frequency * t)
+        combined_motion = heart_motion + lung_motion
+        heart_pen = pg.mkPen(color=(255,0,0), width=3)
+        self.Wave_widget.plot(t, heart_motion, pen=heart_pen, label='Heart Motion')
+        lung_pen = pg.mkPen(color=(0,255,0), width=3)
+        self.Wave_widget.plot(t, lung_motion, pen=lung_pen, label='Lung Motion')
+        combined_pen = pg.mkPen(color=(0,0,255), width=3)
+        self.Wave_widget.plot(t, combined_motion,  pen=combined_pen, label='Combined Motion', linestyle='--')
+        self.Wave_widget.setXRange(0, wave_period)
+        return heart_motion, lung_motion, combined_motion
+    
 def main():
     app = QApplication(sys.argv)
     form = Gooey()

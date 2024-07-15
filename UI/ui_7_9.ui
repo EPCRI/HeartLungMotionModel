@@ -394,6 +394,19 @@
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="Stop_pushButton">
+        <property name="font">
+         <font>
+          <family>Arial</family>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Stop</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="Start_pushButton">
         <property name="font">
@@ -407,16 +420,10 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="Stop_pushButton">
-        <property name="font">
-         <font>
-          <family>Arial</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="Wave_Form_Test_pushButton">
         <property name="text">
-         <string>Stop</string>
+         <string>Wave Form Test</string>
         </property>
        </widget>
       </item>
