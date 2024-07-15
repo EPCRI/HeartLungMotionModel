@@ -23,6 +23,9 @@ unsigned long previousTime = 0;
 
 void setup() {
     Serial.begin(9600);
+    while (!Serial) {
+      ; // wait for serial port to connect
+    }
     stepper.begin(200);
     stepper.enable();
     stepper.setMicrostep(1);      // Set microstep mode to 1:1
@@ -47,7 +50,7 @@ void loop() {
         }
     }
 
-/*
+
     if (motorMove){
       if (motorIndex < motorStepCount) {
           int steps = motorSteps[motorIndex];
@@ -60,7 +63,7 @@ void loop() {
           }
       }
     }
-    */
+    
     
 }
 
@@ -82,11 +85,11 @@ void parseData(String data) {
 
 int calculateRPM(int steps, unsigned long interval) {
     if (steps == 0) {
-        return 200;  // Default RPM for zero steps
+        return 200; 
     }
     float stepsPerSecond = (float)steps / (interval / 1000.0);
     int rpm = (stepsPerSecond * 60) / MOTOR_STEPS;
-    rpm = min(abs(rpm), 300);  // Cap the RPM at 400
+    rpm = min(abs(rpm), 300);  
     return rpm;
 }
 

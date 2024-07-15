@@ -23,6 +23,9 @@ unsigned long previousTime = 0;
 
 void setup() {
     Serial.begin(9600);
+    while (!Serial) {
+          ; // wait for serial port to connect
+    }
     stepper.begin(RPM);
     stepper.enable();
     stepper.setMicrostep(1);      // Set microstep mode to 1:1
@@ -39,7 +42,7 @@ void loop() {
             if (character == 'V') {                         // reached the end of the msg
                 program = false;
                 parseData(motorData);                       // parse received data
-                // printMotorSteps();                       // after we're all done, print the decoded data
+                printMotorSteps();                       // after we're all done, print the decoded data
                 motorMove = true;                           // motor ready to move
                 Serial.println("Y");                        // Confirmation back to UI that the motor would start moving    
             } else {
