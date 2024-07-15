@@ -11,7 +11,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
-
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -19,14 +18,14 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(10, 10, 691, 80))
+        self.groupBox.setGeometry(QtCore.QRect(10, 0, 691, 71))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
         self.groupBox.setFont(font)
         self.groupBox.setObjectName("groupBox")
         self.layoutWidget = QtWidgets.QWidget(self.groupBox)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 30, 670, 41))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 670, 41))
         self.layoutWidget.setObjectName("layoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.layoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -96,7 +95,7 @@ class Ui_MainWindow(object):
         self.Hard_Stop_pushButton.setObjectName("Hard_Stop_pushButton")
         self.gridLayout.addWidget(self.Hard_Stop_pushButton, 0, 7, 1, 1)
         self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_2.setGeometry(QtCore.QRect(10, 90, 691, 191))
+        self.groupBox_2.setGeometry(QtCore.QRect(10, 70, 691, 191))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -261,7 +260,7 @@ class Ui_MainWindow(object):
         self.gridLayout_6.addWidget(self.label_10, 0, 1, 1, 1)
         self.gridLayout_8.addLayout(self.gridLayout_6, 0, 1, 1, 1)
         self.groupBox_3 = QtWidgets.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(10, 300, 691, 181))
+        self.groupBox_3.setGeometry(QtCore.QRect(10, 270, 851, 231))
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
@@ -270,7 +269,7 @@ class Ui_MainWindow(object):
         self.Wave_widget = pg.PlotWidget(self.groupBox_3)
         styles = {"color": "black", "font-size": "15px"}
         self.Wave_widget.setLabel("left", "Amp HZ", **styles)
-        self.Wave_widget.setLabel("bottom", "Fre HZ", **styles)
+        self.Wave_widget.setLabel("bottom", "Freq HZ", **styles)
         self.Wave_widget.setTitle("Combined Heart Lung Motion", color="k", size="12pt")
         self.Wave_widget.setBackground("w")
         self.Wave_widget.setGeometry(QtCore.QRect(0, 20, 731, 161))

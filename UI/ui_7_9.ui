@@ -18,9 +18,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>10</y>
+      <y>0</y>
       <width>691</width>
-      <height>80</height>
+      <height>71</height>
      </rect>
     </property>
     <property name="font">
@@ -36,7 +36,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>20</y>
        <width>670</width>
        <height>41</height>
       </rect>
@@ -164,7 +164,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>90</y>
+      <y>70</y>
       <width>691</width>
       <height>191</height>
      </rect>
@@ -528,9 +528,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>300</y>
-      <width>691</width>
-      <height>181</height>
+      <y>270</y>
+      <width>851</width>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -545,8 +545,8 @@
     <widget class="QWidget" name="Wave_widget" native="true">
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>20</y>
+       <x>100</x>
+       <y>30</y>
        <width>731</width>
        <height>161</height>
       </rect>

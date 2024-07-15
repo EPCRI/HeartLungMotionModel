@@ -24,7 +24,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.Serial_Connection_pushButton.clicked.connect(self.Refresh)
         self.Connect_pushButton.clicked.connect(self.Connect)
         self.Wave_Form_Test_pushButton.clicked.connect(self.Wave)
-
+  
     def Start(self): # Start button to run motors 
         self.ser.write('P'.encode()) 
         Start = self.ser.read()
@@ -71,6 +71,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         
 
     def Wave(self):
+        self.Wave_widget.clear()
         self.heart_amplitude = float(self.Heart_Amp_Input_lineEdit.text())
         print ("heart amp reading", self.heart_amplitude)
         self.heart_frequency = float(self.Heart_Freq_Input_lineEdit.text())
@@ -81,18 +82,21 @@ class Gooey(QMainWindow, Ui_MainWindow):
         wave_period = 1 / self.lung_frequency
         print("Period: ", wave_period)
         t = np.arange(0, wave_period, dt)
-        heart_motion = self.heart_amplitude * np.sin(2 * np.pi * self.heart_frequency * t) # (self.Phase_Diff/360 * 2 * np.pi)
-        lung_motion = self.lung_amplitude * np.sin(2 * np.pi * self.lung_frequency * t)
-        combined_motion = heart_motion + lung_motion
         heart_pen = pg.mkPen(color=(255,0,0), width=3)
-        self.Wave_widget.plot(t, heart_motion, pen=heart_pen, label='Heart Motion')
+        heart_motion = self.heart_amplitude * np.sin(2 * np.pi * self.heart_frequency * t) # (self.Phase_Diff/360 * 2 * np.pi)
+        self.Wave_widget.addLegend()
+        self.Wave_widget.plot(t, heart_motion,  pen=heart_pen, label='Heart Motion', name="Heart Motion")
         lung_pen = pg.mkPen(color=(0,255,0), width=3)
-        self.Wave_widget.plot(t, lung_motion, pen=lung_pen, label='Lung Motion')
+        lung_motion = self.lung_amplitude * np.sin(2 * np.pi * self.lung_frequency * t)
+        self.Wave_widget.plot(t, lung_motion,  pen=lung_pen, label='Lung Motion', name="Lung Motion")
         combined_pen = pg.mkPen(color=(0,0,255), width=3)
-        self.Wave_widget.plot(t, combined_motion,  pen=combined_pen, label='Combined Motion', linestyle='--')
+        combined_motion = heart_motion + lung_motion
+        self.Wave_widget.plot(t, combined_motion,  pen=combined_pen, label='Combined Motion', linestyle='--', name="Combined motion")
         self.Wave_widget.setXRange(0, wave_period)
         return heart_motion, lung_motion, combined_motion
-    
+ 
+     
+     
 def main():
     app = QApplication(sys.argv)
     form = Gooey()
