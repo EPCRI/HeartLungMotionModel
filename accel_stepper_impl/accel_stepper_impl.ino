@@ -2,6 +2,11 @@
 #include "DRV8834.h"
 #include <AccelStepper.h>
 
+/* Lead screw motor connection
+ *  Blue, red, black, green (top to bottom, bottom is gnd)
+ *  With coupler: Green, black red blue
+*/
+ 
 /*
  ------------------------------------------------------------------------------------------
  Library used: DRV8834 (white motor driver)
@@ -18,36 +23,67 @@
  ------------------------------------------------------------------------------------------  
 */
 
-// Pin definitions
+// Pin definitions 
+// Motor 1
 #define MOTOR_STEPS 200
-#define DIR 8
-#define STEP 9
-#define SLEEP 13
-#define M0 10
-#define M1 11
+#define MOTOR1_DIR 8
+#define MOTOR1_STEP 9
+#define MOTOR1_MS1 10
+#define MOTOR1_MS2 11
+#define MOTOR1_MS3 12
 
-DRV8834 drv8834(MOTOR_STEPS, DIR, STEP, SLEEP, M0, M1);
-AccelStepper stepper(AccelStepper::DRIVER, STEP, DIR);
+#define MOTOR2_DIR 2
+#define MOTOR2_STEP 3
+#define MOTOR2_SLEEP 4
+#define MOTOR2_M0 5
+#define MOTOR2_M1 6
+
+
+AccelStepper stepper1(AccelStepper::DRIVER, MOTOR1_STEP, MOTOR1_DIR);
+DRV8834 drv8834(MOTOR_STEPS, MOTOR2_DIR, MOTOR2_STEP, MOTOR2_SLEEP, MOTOR2_M0, MOTOR2_M1);
+AccelStepper stepper2(AccelStepper::DRIVER, MOTOR2_STEP, MOTOR2_DIR);
 
 // Variables
 String motorData = "";                    // string to store received serial motor instruction data
 bool program = false;                     // boolean to manage if arduino should be programmed with motor instructions (start button)
 bool motorMove = false;                   // boolean to manage if motor should start moving (instructions received)
-long motorSteps[256];                     // array to store motor instructions
+long motorSteps[128];                     // array to store motor instructions
 int motorStepCount = 0;                   // int to track number of motor instructions given
 int motorIndex = 0;                       // int to track 
 int stepMode = 1;                         // Microstepping mode, 1 for full step, can go up to 32
 
+unsigned long startTime = 0;              // Variable to store the start time
+unsigned long endTime = 0;                // Variable to store the end time
+
+long positions[2];
+
 void setup() {
     Serial.begin(9600);
+    // motor 1 - a4988
+    pinMode(MOTOR1_MS1, OUTPUT);
+    pinMode(MOTOR1_MS2, OUTPUT);
+    pinMode(MOTOR1_MS3, OUTPUT);
+
+    digitalWrite(MOTOR1_MS1, LOW);
+    digitalWrite(MOTOR1_MS2, LOW);
+    digitalWrite(MOTOR1_MS3, LOW);
+
+    stepper1.setMaxSpeed(150000);      
+    stepper1.setAcceleration(4000);
+
+    // motor 2 - drv8834
     drv8834.begin();
     drv8834.enable();
-    drv8834.setMicrostep(stepMode);     
-    pinMode(SLEEP, OUTPUT);
-    digitalWrite(SLEEP, HIGH);
-
-    stepper.setMaxSpeed(150000);          // AccelStepper parameter to determine max speed
-    stepper.setAcceleration(40000);       // AccelStepper parameter for acceleration
+    drv8834.setMicrostep(stepMode);
+    pinMode(MOTOR2_SLEEP, OUTPUT);
+    pinMode(MOTOR2_M0, OUTPUT);
+    pinMode(MOTOR2_M1, OUTPUT);
+    digitalWrite(MOTOR2_SLEEP, HIGH);
+    digitalWrite(MOTOR2_M0, LOW);
+    digitalWrite(MOTOR2_M1, LOW);
+          
+    stepper2.setMaxSpeed(150000);          
+    stepper2.setAcceleration(4000);  
 }
 
 void loop() {
@@ -63,8 +99,8 @@ void loop() {
                 parseData(motorData);                      
                 motorMove = true;                           // motor ready to move
                 // printMotorSteps();
-                Serial.println("Y");                        // Confirmation back to UI that motor is programmed
-                stepper.moveTo(motorSteps[0]*stepMode);    
+                // Serial.println("Y");                        // Confirmation back to UI that motor is programmed
+                moveMotors();
                 motorIndex = 1;  
             } else {
                 motorData += character;                     // else, we're still receiving - append to motorData
@@ -72,18 +108,28 @@ void loop() {
         }
     }
 
-    if (motorMove){                                 
-      if (stepper.distanceToGo() == 0) {                    // finished one motor instruction, move on
-            // Serial.println(motorSteps[motorIndex],DEC);
-            stepper.moveTo(motorSteps[motorIndex++]*stepMode);
-      }
-  
-      if (motorIndex == motorStepCount){                    // reset motor instruction index
-         motorIndex =0;
-      }
-      
-      stepper.run();
+    if (motorMove){ 
+                                     
+      if (stepper1.distanceToGo() == 0 && stepper2.distanceToGo() == 0) {                   // finished one motor instruction, move on
+            if (motorIndex < motorStepCount) {
+                moveMotors();
+                motorIndex++;
+            } else {
+                motorIndex = 0;
+                motorMove = false;
+                endTime = millis();                        // Record the end time
+                Serial.println(endTime - startTime, DEC);
+                Serial.println("Y"); 
+            }
+        }
+        stepper1.run();
+        stepper2.run();
     }
+}
+
+void moveMotors() {
+    stepper1.moveTo(motorSteps[motorIndex] * stepMode);
+    stepper2.moveTo(motorSteps[motorIndex] * stepMode);
 }
 
 void parseData(String data) {
@@ -93,15 +139,5 @@ void parseData(String data) {
         long steps = strtol(data.substring(i + 1, i + 4).c_str(), NULL, 16);
         if (sign == '0') steps = -steps;
         motorSteps[motorStepCount++] = steps;
-    }
-}
-
-// ---------------------Debugging functions-------------------------------
-void printMotorSteps() {
-    for (int i = 0; i < motorStepCount; i++) {
-        Serial.print("Step ");
-        Serial.print(i + 1);
-        Serial.print(": ");
-        Serial.println(motorSteps[i]);
     }
 }
