@@ -28,9 +28,9 @@
 #define MOTOR_STEPS 200
 #define MOTOR1_DIR 8
 #define MOTOR1_STEP 9
-#define MOTOR1_MS1 10
-#define MOTOR1_MS2 11
-#define MOTOR1_MS3 12
+#define MOTOR1_SLEEP 10
+#define MOTOR1_M0 11
+#define MOTOR1_M1 12
 
 #define MOTOR2_DIR 2
 #define MOTOR2_STEP 3
@@ -40,7 +40,8 @@
 
 
 AccelStepper stepper1(AccelStepper::DRIVER, MOTOR1_STEP, MOTOR1_DIR);
-DRV8834 drv8834(MOTOR_STEPS, MOTOR2_DIR, MOTOR2_STEP, MOTOR2_SLEEP, MOTOR2_M0, MOTOR2_M1);
+DRV8834 drv8834_1(MOTOR_STEPS, MOTOR1_DIR, MOTOR1_STEP, MOTOR1_SLEEP, MOTOR1_M0, MOTOR1_M1);
+DRV8834 drv8834_2(MOTOR_STEPS, MOTOR2_DIR, MOTOR2_STEP, MOTOR2_SLEEP, MOTOR2_M0, MOTOR2_M1);
 AccelStepper stepper2(AccelStepper::DRIVER, MOTOR2_STEP, MOTOR2_DIR);
 
 // Variables
@@ -55,26 +56,27 @@ int stepMode = 1;                         // Microstepping mode, 1 for full step
 unsigned long startTime = 0;              // Variable to store the start time
 unsigned long endTime = 0;                // Variable to store the end time
 
-long positions[2];
-
+unsigned long acce = 3000;
 void setup() {
     Serial.begin(9600);
     // motor 1 - a4988
-    pinMode(MOTOR1_MS1, OUTPUT);
-    pinMode(MOTOR1_MS2, OUTPUT);
-    pinMode(MOTOR1_MS3, OUTPUT);
-
-    digitalWrite(MOTOR1_MS1, LOW);
-    digitalWrite(MOTOR1_MS2, LOW);
-    digitalWrite(MOTOR1_MS3, LOW);
+    drv8834_1.begin();
+    drv8834_1.enable();
+    drv8834_1.setMicrostep(stepMode);
+    pinMode(MOTOR1_SLEEP, OUTPUT);
+    pinMode(MOTOR1_M0, OUTPUT);
+    pinMode(MOTOR1_M1, OUTPUT);
+    digitalWrite(MOTOR1_SLEEP, HIGH);
+    digitalWrite(MOTOR1_M0, LOW);
+    digitalWrite(MOTOR1_M1, LOW);
 
     stepper1.setMaxSpeed(150000);      
-    stepper1.setAcceleration(4000);
+    stepper1.setAcceleration(acce);
 
     // motor 2 - drv8834
-    drv8834.begin();
-    drv8834.enable();
-    drv8834.setMicrostep(stepMode);
+    drv8834_2.begin();
+    drv8834_2.enable();
+    drv8834_2.setMicrostep(stepMode);
     pinMode(MOTOR2_SLEEP, OUTPUT);
     pinMode(MOTOR2_M0, OUTPUT);
     pinMode(MOTOR2_M1, OUTPUT);
@@ -83,7 +85,7 @@ void setup() {
     digitalWrite(MOTOR2_M1, LOW);
           
     stepper2.setMaxSpeed(150000);          
-    stepper2.setAcceleration(4000);  
+    stepper2.setAcceleration(acce);  
 }
 
 void loop() {
