@@ -2,27 +2,24 @@
 #include "DRV8834.h"
 #include <AccelStepper.h>
 
-/* Lead screw motor connection
- *  Blue, red, black, green (top to bottom, bottom is gnd)
- *  With coupler: Green, black red blue
-*/
- 
 /*
  ------------------------------------------------------------------------------------------
  Library used: DRV8834 (white motor driver)
                AccelStepper (helps with motor accel.)
  To be done:
   - quantify relationship between accel. value and the output wave freq.
-     a. Plan was to to a whole period, use digitalWrite to flip a pin, measure with AD2
+     a. Whole period vs. acceleration curve
   - Serial communication UI functionality
   - Determine calibration functionality - where to start?
-  - Mirror command with two motor drivers, drive two motors simultaneously
-     a. TBD, another DRV8834? new motor drivers
-     b. Also how to power both motors?
   - Potentially simplify the setup by using a pro mini once everything is finalized
  ------------------------------------------------------------------------------------------  
 */
 
+/* Motor connection - four bipolar wires
+ *  Blue, red, black, green (top to bottom, bottom is gnd)
+ *  With coupler: Green, black red blue
+*/
+ 
 // Pin definitions 
 // Motor 1
 #define MOTOR_STEPS 200
@@ -56,7 +53,8 @@ int stepMode = 1;                         // Microstepping mode, 1 for full step
 unsigned long startTime = 0;              // Variable to store the start time
 unsigned long endTime = 0;                // Variable to store the end time
 
-unsigned long acce = 3000;
+unsigned long acce = 70000;
+unsigned long speedd = 100000;
 void setup() {
     Serial.begin(9600);
     // motor 1 - a4988
@@ -70,7 +68,7 @@ void setup() {
     digitalWrite(MOTOR1_M0, LOW);
     digitalWrite(MOTOR1_M1, LOW);
 
-    stepper1.setMaxSpeed(150000);      
+    stepper1.setMaxSpeed(speedd);      
     stepper1.setAcceleration(acce);
 
     // motor 2 - drv8834
@@ -84,7 +82,7 @@ void setup() {
     digitalWrite(MOTOR2_M0, LOW);
     digitalWrite(MOTOR2_M1, LOW);
           
-    stepper2.setMaxSpeed(150000);          
+    stepper2.setMaxSpeed(speedd);          
     stepper2.setAcceleration(acce);  
 }
 
@@ -104,14 +102,14 @@ void loop() {
                 // Serial.println("Y");                        // Confirmation back to UI that motor is programmed
                 moveMotors();
                 motorIndex = 1;  
+                startTime = millis();
             } else {
                 motorData += character;                     // else, we're still receiving - append to motorData
             }
         }
     }
 
-    if (motorMove){ 
-                                     
+    if (motorMove){                            
       if (stepper1.distanceToGo() == 0 && stepper2.distanceToGo() == 0) {                   // finished one motor instruction, move on
             if (motorIndex < motorStepCount) {
                 moveMotors();

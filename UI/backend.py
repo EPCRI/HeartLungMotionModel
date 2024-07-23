@@ -26,6 +26,9 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.buttonWaveFormTest.clicked.connect(self.Wave)
 
         self.labelConnectionStatus.setText("Connect to serial port.")
+        if serial_ports() == []:
+            self.labelConnectionStatus.setText("No available ports. Refresh!")
+        self.comboBoxComPort.addItems(serial_ports())
 
     def Start(self): # Start button to run motors 
         self.ser.write('P'.encode()) 
@@ -39,8 +42,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
 
     def Refresh(self): # Refresh button to intake new COMs 
         self.comboBoxComPort.clear()
-        list_of_ports = serial.tools.list_ports.comports()
-        print (list_of_ports)
+        list_of_ports = serial_ports()
         for port in list_of_ports:
             self.comboBoxComPort.addItem(port.name)
 
@@ -97,8 +99,35 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.widgetWaveForm.setXRange(0, wave_period)
         return heart_motion, lung_motion, combined_motion
  
+    
      
-     
+def serial_ports():
+        """ Lists serial port names
+            :raises EnvironmentError:
+                On unsupported or unknown platforms
+            :returns:
+                A list of the serial ports available on the system
+        """
+        if sys.platform.startswith('win'):
+            ports = ['COM%s' % (i + 1) for i in range(256)]
+        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+            # this excludes your current terminal "/dev/tty"
+            ports = glob.glob('/dev/tty[A-Za-z]*')
+        elif sys.platform.startswith('darwin'):
+            ports = glob.glob('/dev/tty.*')
+        else:
+            raise EnvironmentError('Unsupported platform')
+
+        result = []
+        for port in ports:
+            try:
+                s = serial.Serial(port)
+                s.close()
+                result.append(str(port))
+            except (OSError):
+                pass
+        return result   
+
 def main():
     app = QApplication(sys.argv)
     app.setStyle('fusion')
