@@ -1,6 +1,10 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
+"""
+README:
+UI design that works with backend.py
+"""
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -106,10 +110,10 @@ class Ui_MainWindow(object):
         self.lineEditHeartFreq.setObjectName("lineEditHeartFreq")
         self.parametersLayout.addWidget(self.lineEditHeartFreq, 0, 4)
 
-        self.labelHzHeart = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelHzHeart.setFont(font)
-        self.labelHzHeart.setObjectName("labelHzHeart")
-        self.parametersLayout.addWidget(self.labelHzHeart, 0, 5)
+        self.labelbpmHeart = QtWidgets.QLabel(self.groupBoxParameters)
+        self.labelbpmHeart.setFont(font)
+        self.labelbpmHeart.setObjectName("labelbpmHeart")
+        self.parametersLayout.addWidget(self.labelbpmHeart, 0, 5)
 
         self.labelLungText = QtWidgets.QLabel(self.groupBoxParameters)
         self.labelLungText.setFont(font)
@@ -138,10 +142,10 @@ class Ui_MainWindow(object):
         self.lineEditLungFreq.setObjectName("lineEditLungFreq")
         self.parametersLayout.addWidget(self.lineEditLungFreq, 1, 4)
 
-        self.labelHzLung = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelHzLung.setFont(font)
-        self.labelHzLung.setObjectName("labelHzLung")
-        self.parametersLayout.addWidget(self.labelHzLung, 1, 5)
+        self.labelbpmLung = QtWidgets.QLabel(self.groupBoxParameters)
+        self.labelbpmLung.setFont(font)
+        self.labelbpmLung.setObjectName("labelbpmLung")
+        self.parametersLayout.addWidget(self.labelbpmLung, 1, 5)
 
         self.labelDistRevol = QtWidgets.QLabel(self.groupBoxParameters)
         self.labelDistRevol.setFont(font)
@@ -225,11 +229,11 @@ class Ui_MainWindow(object):
         self.labelHeartText.setText(_translate("MainWindow", "Heart Motion"))
         self.labelAmpHeart.setText(_translate("MainWindow", "Amp"))
         self.labelFreqHeart.setText(_translate("MainWindow", "Freq"))
-        self.labelHzHeart.setText(_translate("MainWindow", "Hz"))
+        self.labelbpmHeart.setText(_translate("MainWindow", "bpm"))
         self.labelLungText.setText(_translate("MainWindow", "Lung Motion"))
         self.labelAmpLung.setText(_translate("MainWindow", "Amp"))
         self.labelFreqLung.setText(_translate("MainWindow", "Freq"))
-        self.labelHzLung.setText(_translate("MainWindow", "Hz"))
+        self.labelbpmLung.setText(_translate("MainWindow", "bpm"))
         self.buttonStart.setText(_translate("MainWindow", "Start"))
         self.buttonStop.setText(_translate("MainWindow", "Stop"))
         self.buttonWaveFormTest.setText(_translate("MainWindow", "Waveform Test"))
