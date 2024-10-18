@@ -16,20 +16,12 @@ os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts.warning=false"
 
 
 """
-README:
 This script works together with frontend.py and the Arduino firmware.
-
-This UI is currently coded to support the lead screw system design.
-For the lead screw design, stepper.moveTo have the motors move in the same direction.
-
-To support the belt-rod design, change the following parameters:
-Set displacement_per_revolution to 40 value
-In the Arduino code, wherever there is stepper.moveTo function, make sure one is positive and one is negative.
 """
 
 def generate_motion(t, heart_amplitude, heart_frequency, lung_amplitude, lung_frequency):
     """
-    Python code to generate combined waveform consisting of heart and lung sine waves.
+    Generate combined waveform consisting of heart and lung sine waves.
     """
     heart_motion = heart_amplitude * np.sin(2 * np.pi * heart_frequency * t)
     lung_motion = lung_amplitude * np.sin(2 * np.pi * lung_frequency * t)
@@ -52,6 +44,7 @@ def encode_motor_instructions(steps, acceleration):
     data.append('V')                      # End byte 'V'
     return ''.join(data).encode('utf-8')
 
+# Variables
 displacement_per_revolution = 8  # mm
 steps_per_mm = 200 / displacement_per_revolution
 
@@ -148,13 +141,10 @@ class Gooey(QMainWindow, Ui_MainWindow):
         # Load profiles from JSON file
         with open('profiles.json', 'r') as f:
             self.profiles = json.load(f)
-        # Populate comboBoxProfile
         profile_names = [profile['name'] for profile in self.profiles]
         self.comboBoxProfile.addItems(profile_names)
-        # Connect profile selection
         self.comboBoxProfile.currentIndexChanged.connect(self.profile_selected)
-        # Initialize acceleration
-        self.acceleration = 1000  # Default value
+        self.acceleration = 1000
 
         # Connect widgets to methods
         self.buttonStart.clicked.connect(self.start_continuous)
@@ -176,7 +166,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.comboBoxComPort.activated.connect(self.connect_arduino)
 
         # Initialize selected profile
-        self.profile_selected(0)  # Load the first profile by default
+        self.profile_selected(0)
 
         # Initialize a timer for continuous feedback
         self.feedback_timer = QTimer()
@@ -186,13 +176,12 @@ class Gooey(QMainWindow, Ui_MainWindow):
         selected_profile = self.profiles[index]
         # Update the parameters
         self.heart_amplitude = selected_profile['heart_amplitude']
-        self.heart_frequency = selected_profile['heart_frequency'] / 60  # Convert bpm to Hz
+        self.heart_frequency = selected_profile['heart_frequency'] / 60  
         self.lung_amplitude = selected_profile['lung_amplitude']
-        self.lung_frequency = selected_profile['lung_frequency'] / 60  # Convert bpm to Hz
-        # Store the acceleration value
+        self.lung_frequency = selected_profile['lung_frequency'] / 60 
         self.acceleration = selected_profile['acceleration']
-        # Update the waveform
         self.waveform_gen()
+
         # Calculate max amplitude
         t = np.arange(0, 1 / self.lung_frequency, 0.01)
         _, _, combined_motion = generate_motion(t, self.heart_amplitude, self.heart_frequency, self.lung_amplitude, self.lung_frequency)
@@ -207,7 +196,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         """
         displacement = float(self.lineEditDisplacement.text())
         steps = displacement * 10 * steps_per_mm
-        command = f"U{int(steps)}\n"  # Added newline
+        command = f"U{int(steps)}\n" 
         if self.ser:
             self.ser.write(command.encode())
         else:
@@ -219,7 +208,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         """
         displacement = float(self.lineEditDisplacement.text())
         steps = displacement * 10 * steps_per_mm
-        command = f"D{int(steps)}\n"  # Added newline
+        command = f"D{int(steps)}\n"
         if self.ser:
             self.ser.write(command.encode())
         else:
@@ -240,7 +229,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.ser.write(b'G')
 
         # Start the timer to read feedback
-        self.feedback_timer.start(100)  # Check every 100 ms
+        self.feedback_timer.start(100)
 
         # Disable buttons to prevent multiple starts
         self.buttonStart.setEnabled(False)
@@ -257,7 +246,6 @@ class Gooey(QMainWindow, Ui_MainWindow):
             if line == '':
                 continue  # Ignore empty lines
             elif line == 'Y':
-                # Movement cycle completed, time feedback should have been received
                 pass
             else:
                 try:
@@ -304,7 +292,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         Generate motor instructions and send to Arduino.
         """
         t_fine = np.arange(0, 1 / self.lung_frequency, 0.01)
-        heart_motion, lung_motion, combined_motion = generate_motion(t_fine, self.heart_amplitude, self.heart_frequency, self.lung_amplitude, self.lung_frequency)
+        _, _, combined_motion = generate_motion(t_fine, self.heart_amplitude, self.heart_frequency, self.lung_amplitude, self.lung_frequency)
 
         peaks, _ = find_peaks(combined_motion)
         troughs, _ = find_peaks(-combined_motion)
@@ -325,11 +313,10 @@ class Gooey(QMainWindow, Ui_MainWindow):
 
     def stop(self):
         """
-        Stop motors through Arduino and cleanup
+        Stop motors and cleanup
         """
         if self.ser:
             self.ser.write(b'X')
-            # Flush the serial buffers
             self.ser.flushInput()
             self.ser.flushOutput()
             self.ser.reset_input_buffer()

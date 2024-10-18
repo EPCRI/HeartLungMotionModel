@@ -3,7 +3,6 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
 """
-README:
 UI design that works with backend.py
 """
 
@@ -96,7 +95,7 @@ class Ui_MainWindow(object):
         self.comboBoxProfile = QtWidgets.QComboBox(self.groupBoxParameters)
         self.comboBoxProfile.setFont(font)
         self.comboBoxProfile.setObjectName("comboBoxProfile")
-        self.parametersLayout.addWidget(self.comboBoxProfile, 0, 1, 1, 4)  # Span multiple columns
+        self.parametersLayout.addWidget(self.comboBoxProfile, 0, 1, 1, 4)
 
         # Label for Max Amplitude
         self.labelMaxAmp = QtWidgets.QLabel(self.groupBoxParameters)
@@ -110,7 +109,7 @@ class Ui_MainWindow(object):
         self.labelTimeFeedback.setFont(font)
         self.labelTimeFeedback.setObjectName("labelTimeFeedback")
         self.labelTimeFeedback.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelTimeFeedback, 1, 2, 1, 3)  # Spanning columns 2 to 4
+        self.parametersLayout.addWidget(self.labelTimeFeedback, 1, 2, 1, 3)
 
         self.mainLayout.addWidget(self.groupBoxParameters)
 
@@ -143,7 +142,7 @@ class Ui_MainWindow(object):
         self.groupBoxWaveForm = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBoxWaveForm.setFont(font)
         self.groupBoxWaveForm.setObjectName("groupBoxWaveForm")
-        self.groupBoxWaveForm.setMinimumHeight(350)  # Adjust the height as needed
+        self.groupBoxWaveForm.setMinimumHeight(350) 
         self.waveformLayout = QtWidgets.QVBoxLayout(self.groupBoxWaveForm)
 
         self.widgetWaveForm = pg.PlotWidget(self.groupBoxWaveForm)
@@ -154,7 +153,7 @@ class Ui_MainWindow(object):
         self.widgetWaveForm.setBackground("w")
         self.waveformLayout.addWidget(self.widgetWaveForm)
 
-        self.mainLayout.addWidget(self.groupBoxWaveForm, stretch=1)  # Stretch to adjust size with window
+        self.mainLayout.addWidget(self.groupBoxWaveForm, stretch=1)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
