@@ -139,7 +139,7 @@ class Gooey(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         # Load profiles from JSON file
-        with open('profiles.json', 'r') as f:
+        with open('UI/profiles.json', 'r') as f:
             self.profiles = json.load(f)
         profile_names = [profile['name'] for profile in self.profiles]
         self.comboBoxProfile.addItems(profile_names)
