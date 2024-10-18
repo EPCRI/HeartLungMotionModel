@@ -1,0 +1,66 @@
+[
+    {
+        "name": "Lung MVP (15 bpm, no heart)",
+        "heart_frequency": 0,
+        "heart_amplitude": 0,
+        "lung_frequency": 15,
+        "lung_amplitude": 2,
+        "acceleration": 1000
+    },
+    {
+        "name": "Heart 80bpm, Amp 0.5, Lung 15bpm, Amp 0.5",
+        "heart_frequency": 80,
+        "heart_amplitude": 0.5,
+        "lung_frequency": 15,
+        "lung_amplitude": 0.5,
+        "acceleration": 6200
+    },
+    {
+        "name": "Heart 90bpm, Amp 0.25, Lung 15bpm, Amp 1",
+        "heart_frequency": 90,
+        "heart_amplitude": 0.25,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 4000
+    },
+    {
+        "name": "Heart 90bpm, Amp 0.5, Lung 15bpm, Amp 1",
+        "heart_frequency": 90,
+        "heart_amplitude": 0.5,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 8500
+    },
+    {
+        "name": "Heart 90bpm, Amp 1, Lung 15bpm, Amp 1",
+        "heart_frequency": 90,
+        "heart_amplitude": 1,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 20000
+    },
+    {
+        "name": "Heart 120bpm, Amp 0.25, Lung 15bpm, Amp 1",
+        "heart_frequency": 120,
+        "heart_amplitude": 0.25,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 6900
+    },
+    {
+        "name": "Heart 120bpm, Amp 0.5, Lung 15bpm, Amp 1",
+        "heart_frequency": 120,
+        "heart_amplitude": 0.5,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 14800
+    },
+    {
+        "name": "Heart 120bpm, Amp 1, Lung 15bpm, Amp 1",
+        "heart_frequency": 120,
+        "heart_amplitude": 1,
+        "lung_frequency": 15,
+        "lung_amplitude": 1,
+        "acceleration": 75000
+    }
+]

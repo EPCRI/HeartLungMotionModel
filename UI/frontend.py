@@ -1,3 +1,4 @@
+# frontend.py
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
@@ -5,6 +6,7 @@ import pyqtgraph as pg
 README:
 UI design that works with backend.py
 """
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -15,11 +17,13 @@ class Ui_MainWindow(object):
         # Main layout
         self.mainLayout = QtWidgets.QVBoxLayout(self.centralwidget)
 
-        # Groupbox setup
-        self.groupBoxSetup = QtWidgets.QGroupBox(self.centralwidget)
+        # Font settings
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
+
+        # Groupbox setup
+        self.groupBoxSetup = QtWidgets.QGroupBox(self.centralwidget)
         self.groupBoxSetup.setFont(font)
         self.groupBoxSetup.setObjectName("groupBoxSetup")
 
@@ -83,89 +87,34 @@ class Ui_MainWindow(object):
 
         self.parametersLayout = QtWidgets.QGridLayout(self.groupBoxParameters)
 
-        self.labelHeartText = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelHeartText.setFont(font)
-        self.labelHeartText.setObjectName("labelHeartText")
-        self.parametersLayout.addWidget(self.labelHeartText, 0, 0)
+        # Add Profile Selection Label and ComboBox
+        self.labelProfile = QtWidgets.QLabel(self.groupBoxParameters)
+        self.labelProfile.setFont(font)
+        self.labelProfile.setObjectName("labelProfile")
+        self.parametersLayout.addWidget(self.labelProfile, 0, 0)
 
-        self.labelAmpHeart = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelAmpHeart.setFont(font)
-        self.labelAmpHeart.setObjectName("labelAmpHeart")
-        self.labelAmpHeart.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelAmpHeart, 0, 1)
+        self.comboBoxProfile = QtWidgets.QComboBox(self.groupBoxParameters)
+        self.comboBoxProfile.setFont(font)
+        self.comboBoxProfile.setObjectName("comboBoxProfile")
+        self.parametersLayout.addWidget(self.comboBoxProfile, 0, 1, 1, 4)  # Span multiple columns
 
-        self.lineEditHeartAmp = QtWidgets.QLineEdit(self.groupBoxParameters)
-        self.lineEditHeartAmp.setFont(font)
-        self.lineEditHeartAmp.setObjectName("lineEditHeartAmp")
-        self.parametersLayout.addWidget(self.lineEditHeartAmp, 0, 2)
-
-        self.labelFreqHeart = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelFreqHeart.setFont(font)
-        self.labelFreqHeart.setObjectName("labelFreqHeart")
-        self.labelFreqHeart.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelFreqHeart, 0, 3)
-
-        self.lineEditHeartFreq = QtWidgets.QLineEdit(self.groupBoxParameters)
-        self.lineEditHeartFreq.setFont(font)
-        self.lineEditHeartFreq.setObjectName("lineEditHeartFreq")
-        self.parametersLayout.addWidget(self.lineEditHeartFreq, 0, 4)
-
-        self.labelbpmHeart = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelbpmHeart.setFont(font)
-        self.labelbpmHeart.setObjectName("labelbpmHeart")
-        self.parametersLayout.addWidget(self.labelbpmHeart, 0, 5)
-
-        self.labelLungText = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelLungText.setFont(font)
-        self.labelLungText.setObjectName("labelLungText")
-        self.parametersLayout.addWidget(self.labelLungText, 1, 0)
-
-        self.labelAmpLung = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelAmpLung.setFont(font)
-        self.labelAmpLung.setObjectName("labelAmpLung")
-        self.labelAmpLung.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelAmpLung, 1, 1)
-
-        self.lineEditLungAmp = QtWidgets.QLineEdit(self.groupBoxParameters)
-        self.lineEditLungAmp.setFont(font)
-        self.lineEditLungAmp.setObjectName("lineEditLungAmp")
-        self.parametersLayout.addWidget(self.lineEditLungAmp, 1, 2)
-
-        self.labelFreqLung = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelFreqLung.setFont(font)
-        self.labelFreqLung.setObjectName("labelFreqLung")
-        self.labelFreqLung.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelFreqLung, 1, 3)
-
-        self.lineEditLungFreq = QtWidgets.QLineEdit(self.groupBoxParameters)
-        self.lineEditLungFreq.setFont(font)
-        self.lineEditLungFreq.setObjectName("lineEditLungFreq")
-        self.parametersLayout.addWidget(self.lineEditLungFreq, 1, 4)
-
-        self.labelbpmLung = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelbpmLung.setFont(font)
-        self.labelbpmLung.setObjectName("labelbpmLung")
-        self.parametersLayout.addWidget(self.labelbpmLung, 1, 5)
-
-        self.labelDistRevol = QtWidgets.QLabel(self.groupBoxParameters)
-        self.labelDistRevol.setFont(font)
-        self.labelDistRevol.setObjectName("labelDistRevol")
-        self.parametersLayout.addWidget(self.labelDistRevol, 2, 0)
-
-        self.lineEditDistRevol = QtWidgets.QLineEdit(self.groupBoxParameters)
-        self.lineEditDistRevol.setFont(font)
-        self.lineEditDistRevol.setObjectName("lineEditDistRevol")
-        self.parametersLayout.addWidget(self.lineEditDistRevol, 2, 1, 1, 2)  # Span multiple columns
-
+        # Label for Max Amplitude
         self.labelMaxAmp = QtWidgets.QLabel(self.groupBoxParameters)
         self.labelMaxAmp.setFont(font)
         self.labelMaxAmp.setObjectName("labelMaxAmp")
-        self.labelMaxAmp.setAlignment(QtCore.Qt.AlignRight)
-        self.parametersLayout.addWidget(self.labelMaxAmp, 2, 4)
+        self.labelMaxAmp.setAlignment(QtCore.Qt.AlignLeft)
+        self.parametersLayout.addWidget(self.labelMaxAmp, 1, 0, 1, 2)
+
+        # Label for Time Feedback
+        self.labelTimeFeedback = QtWidgets.QLabel(self.groupBoxParameters)
+        self.labelTimeFeedback.setFont(font)
+        self.labelTimeFeedback.setObjectName("labelTimeFeedback")
+        self.labelTimeFeedback.setAlignment(QtCore.Qt.AlignRight)
+        self.parametersLayout.addWidget(self.labelTimeFeedback, 1, 2, 1, 3)  # Spanning columns 2 to 4
 
         self.mainLayout.addWidget(self.groupBoxParameters)
 
-
+        # Button Layout
         self.buttonLayout = QtWidgets.QHBoxLayout()
 
         self.buttonStart = QtWidgets.QPushButton(self.centralwidget)
@@ -177,11 +126,16 @@ class Ui_MainWindow(object):
         self.buttonStop.setFont(font)
         self.buttonStop.setObjectName("buttonStop")
         self.buttonLayout.addWidget(self.buttonStop)
-    
-        self.buttonWaveFormTest = QtWidgets.QPushButton(self.centralwidget)
-        self.buttonWaveFormTest.setFont(font)
-        self.buttonWaveFormTest.setObjectName("buttonWaveFormTest")
-        self.buttonLayout.addWidget(self.buttonWaveFormTest)
+
+        self.buttonTest = QtWidgets.QPushButton(self.centralwidget)
+        self.buttonTest.setFont(font)
+        self.buttonTest.setObjectName("buttonTest")
+        self.buttonLayout.addWidget(self.buttonTest)
+
+        self.buttonRampTest = QtWidgets.QPushButton(self.centralwidget)
+        self.buttonRampTest.setFont(font)
+        self.buttonRampTest.setObjectName("buttonRampTest")
+        self.buttonLayout.addWidget(self.buttonRampTest)
 
         self.mainLayout.addLayout(self.buttonLayout)
 
@@ -194,8 +148,8 @@ class Ui_MainWindow(object):
 
         self.widgetWaveForm = pg.PlotWidget(self.groupBoxWaveForm)
         styles = {"color": "black", "font-size": "15px"}
-        self.widgetWaveForm.setLabel("left", "Amp HZ", **styles)
-        self.widgetWaveForm.setLabel("bottom", "Freq HZ", **styles)
+        self.widgetWaveForm.setLabel("left", "Amplitude (cm)", **styles)
+        self.widgetWaveForm.setLabel("bottom", "Time (s)", **styles)
         self.widgetWaveForm.setTitle("Combined Heart Lung Motion", color="k", size="12pt")
         self.widgetWaveForm.setBackground("w")
         self.waveformLayout.addWidget(self.widgetWaveForm)
@@ -216,7 +170,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Heart Lung Motion Simulator"))
         self.groupBoxSetup.setTitle(_translate("MainWindow", "Setup"))
         self.buttonRefresh.setText(_translate("MainWindow", "Refresh"))
         self.labelComPort.setText(_translate("MainWindow", "COM Port:"))
@@ -226,19 +180,11 @@ class Ui_MainWindow(object):
         self.buttonUp.setText(_translate("MainWindow", "Up"))
         self.buttonDown.setText(_translate("MainWindow", "Down"))
         self.groupBoxParameters.setTitle(_translate("MainWindow", "Parameters"))
-        self.labelHeartText.setText(_translate("MainWindow", "Heart Motion"))
-        self.labelAmpHeart.setText(_translate("MainWindow", "Amp"))
-        self.labelFreqHeart.setText(_translate("MainWindow", "Freq"))
-        self.labelbpmHeart.setText(_translate("MainWindow", "bpm"))
-        self.labelLungText.setText(_translate("MainWindow", "Lung Motion"))
-        self.labelAmpLung.setText(_translate("MainWindow", "Amp"))
-        self.labelFreqLung.setText(_translate("MainWindow", "Freq"))
-        self.labelbpmLung.setText(_translate("MainWindow", "bpm"))
+        self.labelProfile.setText(_translate("MainWindow", "Select Profile:"))
+        self.labelMaxAmp.setText(_translate("MainWindow", "Pk-pk amplitude: x cm"))
+        self.labelTimeFeedback.setText(_translate("MainWindow", "Time feedback: x ms"))
         self.buttonStart.setText(_translate("MainWindow", "Start"))
         self.buttonStop.setText(_translate("MainWindow", "Stop"))
-        self.buttonWaveFormTest.setText(_translate("MainWindow", "Waveform Test"))
-        self.labelDistRevol.setText(_translate("MainWindow", "Distance per rev. (mm)"))
-        self.labelMaxAmp.setText(_translate("MainWindow", "Max Amplitude: x cm"))
+        self.buttonTest.setText(_translate("MainWindow", "Test"))
+        self.buttonRampTest.setText(_translate("MainWindow", "Ramp Test"))
         self.groupBoxWaveForm.setTitle(_translate("MainWindow", "Waveform"))
-
-
