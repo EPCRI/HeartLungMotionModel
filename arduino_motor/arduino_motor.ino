@@ -102,7 +102,7 @@ void loop() {
         } else if (command == 'U' || command == 'D') {  // Handle up/down commands
             String steps_str = Serial.readStringUntil('\n');
             long steps = steps_str.toInt();
-            if (command == 'D') steps = -steps;
+            if (command == 'U') steps = -steps;
             calibrateMotor = true;
             stepper1.move(steps);
             stepper2.move(steps);

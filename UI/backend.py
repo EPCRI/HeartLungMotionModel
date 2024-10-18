@@ -14,7 +14,6 @@ import json
 import os
 os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts.warning=false"
 
-
 """
 This script works together with frontend.py and the Arduino firmware.
 """
@@ -126,7 +125,74 @@ class RampTestWorker(QObject):
                 self.progress.emit(index, "Time feedback: N/A")
 
             # Small delay before moving to next profile
-            time.sleep(1)
+            if self._is_running:
+                time.sleep(1)
+
+        self.finished.emit()
+
+    def stop(self):
+        self._is_running = False
+
+class SingleTestWorker(QObject):
+    progress = pyqtSignal(str)
+    finished = pyqtSignal()
+
+    def __init__(self, ser, heart_amplitude, heart_frequency, lung_amplitude, lung_frequency, acceleration):
+        super().__init__()
+        self.ser = ser
+        self.heart_amplitude = heart_amplitude
+        self.heart_frequency = heart_frequency
+        self.lung_amplitude = lung_amplitude
+        self.lung_frequency = lung_frequency
+        self.acceleration = acceleration
+        self._is_running = True
+
+    def run(self):
+        if not self._is_running:
+            return
+
+        # Program Arduino with current profile
+        t_fine = np.arange(0, 1 / self.lung_frequency, 0.01)
+        _, _, combined_motion = generate_motion(t_fine, self.heart_amplitude, self.heart_frequency, self.lung_amplitude, self.lung_frequency)
+
+        peaks, _ = find_peaks(combined_motion)
+        troughs, _ = find_peaks(-combined_motion)
+
+        extrema_indices = np.sort(np.concatenate((peaks, troughs)))
+        extrema_values = combined_motion[extrema_indices] * 10  # in mm
+
+        displacements_mm = np.diff(extrema_values)
+        motor_steps = np.round(displacements_mm * steps_per_mm).astype(int)
+
+        return_step = -np.round((extrema_values[-1] - extrema_values[0]) * steps_per_mm).astype(int)
+        motor_steps = np.append(motor_steps, return_step)
+
+        motor_instructions = encode_motor_instructions(motor_steps, self.acceleration)
+
+        # Send motor instructions to Arduino
+        self.ser.write(motor_instructions)
+        time.sleep(0.1)
+
+        # Send 'O' command to run once
+        self.ser.write(b'O')
+
+        # Read feedback from Arduino
+        time_feedback = None
+        while self._is_running:
+            if self.ser.in_waiting:
+                line = self.ser.readline().decode().strip()
+                if line == '':
+                    continue  # Ignore empty lines
+                elif line == 'Y':
+                    break  # Done
+                else:
+                    try:
+                        time_feedback = int(line)
+                        self.progress.emit(f"Time feedback: {time_feedback} ms")
+                    except ValueError:
+                        pass  # Ignore non-integer lines
+            else:
+                time.sleep(0.01)  # Small delay to prevent tight loop
 
         self.finished.emit()
 
@@ -262,30 +328,39 @@ class Gooey(QMainWindow, Ui_MainWindow):
             self.labelConnectionStatus.setText("No serial connection.")
             return
 
-        # Program the Arduino with the motion pattern
-        self.program_arduino()
+        # Disable buttons to prevent multiple starts
+        self.buttonStart.setEnabled(False)
+        self.buttonTest.setEnabled(False)
+        self.buttonRampTest.setEnabled(False)
+        self.buttonStop.setEnabled(True)
 
-        # Send 'O' command to run once
-        self.ser.write(b'O')
+        # Create the worker and thread
+        self.single_test_worker = SingleTestWorker(self.ser, self.heart_amplitude, self.heart_frequency, self.lung_amplitude, self.lung_frequency, self.acceleration)
+        self.single_test_thread = QThread()
+        self.single_test_worker.moveToThread(self.single_test_thread)
 
-        # Read feedback from Arduino
-        time_feedback = None
-        while True:
-            line = self.ser.readline().decode().strip()
-            if line == '':
-                continue  # Timeout, try again
-            elif line == 'Y':
-                break  # Done
-            else:
-                try:
-                    time_feedback = int(line)
-                except ValueError:
-                    pass  # Ignore non-integer lines
+        # Connect signals
+        self.single_test_worker.progress.connect(self.update_time_feedback)
+        self.single_test_worker.finished.connect(self.single_test_finished)
+        self.single_test_worker.finished.connect(self.single_test_thread.quit)
+        self.single_test_worker.finished.connect(self.single_test_worker.deleteLater)
+        self.single_test_thread.finished.connect(self.single_test_thread.deleteLater)
 
-        if time_feedback is not None:
-            self.labelTimeFeedback.setText(f"Time feedback: {time_feedback} ms")
-        else:
-            self.labelTimeFeedback.setText("Time feedback: N/A")
+        self.single_test_thread.started.connect(self.single_test_worker.run)
+
+        self.single_test_thread.start()
+
+    def update_time_feedback(self, time_feedback):
+        self.labelTimeFeedback.setText(time_feedback)
+        QApplication.processEvents()
+
+    def single_test_finished(self):
+        # Re-enable buttons
+        self.buttonStart.setEnabled(True)
+        self.buttonTest.setEnabled(True)
+        self.buttonRampTest.setEnabled(True)
+        self.buttonStop.setEnabled(False)
+        self.labelConnectionStatus.setText("Test completed.")
 
     def program_arduino(self):
         """
@@ -336,15 +411,22 @@ class Gooey(QMainWindow, Ui_MainWindow):
             del self.ramp_test_worker
             del self.ramp_test_thread
 
+        # If single test is running, stop the worker
+        if hasattr(self, 'single_test_worker'):
+            self.single_test_worker.stop()
+            self.single_test_thread.quit()
+            self.single_test_thread.wait()
+            del self.single_test_worker
+            del self.single_test_thread
+
         # Re-enable buttons
         self.buttonStart.setEnabled(True)
         self.buttonTest.setEnabled(True)
         self.buttonRampTest.setEnabled(True)
-        self.buttonStop.setEnabled(False)
+        self.buttonStop.setEnabled(True)
 
         # Reset time feedback label
         self.labelTimeFeedback.setText("Time feedback: N/A")
-
 
     def update_profile_started(self, index):
         self.comboBoxProfile.setCurrentIndex(index)
