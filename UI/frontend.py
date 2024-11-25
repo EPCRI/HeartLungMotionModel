@@ -3,7 +3,10 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import pyqtgraph as pg
 
 """
-UI design that works with backend.py
+PyQt5 frontend design that works with backend.py for full functionality.
+
+Author: Wendy Tan
+Date: 11/24/2024
 """
 
 class Ui_MainWindow(object):

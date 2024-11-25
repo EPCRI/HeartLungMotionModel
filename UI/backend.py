@@ -15,7 +15,15 @@ import os
 os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts.warning=false"
 
 """
-This script works together with frontend.py and the Arduino firmware.
+PyQt5 backend code for the UI to:
+    - communicate serially with an Arduino that controls two bipolar stepper motors
+    - provide calibration control of motors' position
+    - allow the users to select from a list of predefined waveform profiles (heart freq, heart amp, lung freq, lung amp)
+    - allow testing for one iteration or for indefinite iterations ("Test" button will run the waveform for a single period, "Start" button will repeatedly move the motors)
+    - have a "Ramp test" button that goes through individual waveform profiles
+    
+Author: Wendy Tan
+Date: 11/24/2024
 """
 
 def generate_motion(t, heart_amplitude, heart_frequency, lung_amplitude, lung_frequency):

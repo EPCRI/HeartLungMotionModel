@@ -1,6 +1,21 @@
+/*
+Firmware code for the heart lung motion model (lead screw design). 
+
+This code works with the PyQt5 UI under the UI folder. 
+The UI allows the user to program the two bipolar stepper motors to move according to the selected waveform patterns.
+
+It uses library 'AccelStepper' by Mike McCauley and library 'StepperDriver' by Laurentiu Badea.
+Connection configuration from Arduino shield to motor lines: B2 - blue, B1 - red, A1 - black, A2 - green.
+
+Author: Wendy Tan
+Date: 11/24/2024
+*/
+
+
+
 // Arduino Code
 #include <Arduino.h>
-#include <AccelStepper.h>
+#include "AccelStepper.h"
 #include "DRV8834.h"
 
 // Pin definitions 
