@@ -21,18 +21,18 @@ Date: 11/24/2024
 // Pin definitions 
 // Motor 1
 #define MOTOR_STEPS 200
-#define MOTOR1_DIR 8
-#define MOTOR1_STEP 9
-#define MOTOR1_SLEEP 10
-#define MOTOR1_M0 11
-#define MOTOR1_M1 12
+#define MOTOR1_DIR 13
+#define MOTOR1_STEP 12
+#define MOTOR1_SLEEP 11
+#define MOTOR1_M0 8
+#define MOTOR1_M1 9
 
 // Motor 2
-#define MOTOR2_DIR 2
-#define MOTOR2_STEP 3
-#define MOTOR2_SLEEP 4
-#define MOTOR2_M0 5
-#define MOTOR2_M1 6
+#define MOTOR2_DIR 7
+#define MOTOR2_STEP 6
+#define MOTOR2_SLEEP 5
+#define MOTOR2_M0 2
+#define MOTOR2_M1 3
 
 AccelStepper stepper1(AccelStepper::DRIVER, MOTOR1_STEP, MOTOR1_DIR);
 AccelStepper stepper2(AccelStepper::DRIVER, MOTOR2_STEP, MOTOR2_DIR);

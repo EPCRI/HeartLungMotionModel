@@ -6,9 +6,9 @@ arduino_motor: contains the arduino firmware code.
 
 UI: contains two python files - run backend.py to load the UI.
 
-![Connection Layout](Layout.png)
-
 UI usage:
+
+![Board Configuration](board.jpg)
 
 ![UI design](UI/UI.png)
 
